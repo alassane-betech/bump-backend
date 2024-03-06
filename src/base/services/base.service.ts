@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Logger } from "@nestjs/common";
-import { BaseEntity, Repository } from "typeorm";
+import { BaseEntity, DeepPartial, DeleteResult, Repository } from "typeorm";
 import { IBaseService } from "../interfaces/base.service.interface";
 
 export abstract class BaseService<T extends BaseEntity> implements IBaseService<T> {
@@ -11,38 +11,80 @@ export abstract class BaseService<T extends BaseEntity> implements IBaseService<
     this.baseRepository = baseRepository;
   }
 
-  async create(item: T): Promise<T> {
+  async create(item: DeepPartial<T>): Promise<T> {
     try {
-      const savedItem = await this.baseRepository.save(item);
-      return savedItem;
-    } catch (e) {
-      this.logger.error(e);
-      throw new HttpException(
-        {
-          statusCode: HttpStatus.BAD_REQUEST,
-          error: "An error have occured"
-        },
-        HttpStatus.BAD_REQUEST,
-        {
-          cause: e
-        }
-      );
+      const newItem = this.baseRepository.create(item);
+      return await this.baseRepository.save(newItem);
+    } catch (error) {
+      this.logger.error(error);
+      throw new HttpException("Failed to create item", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
-  async update(item: T): Promise<T> {
-    return null;
+  async update(item: DeepPartial<T>): Promise<T> {
+    try {
+      const savedItem = await this.findById((item as any).id);
+
+      if (!savedItem) {
+        throw new HttpException("Item not found", HttpStatus.NOT_FOUND);
+      }
+
+      const updatedEntity = this.baseRepository.merge(savedItem, item);
+
+      return await this.baseRepository.save(updatedEntity);
+    } catch (error) {
+      this.logger.error(error);
+      throw new HttpException("Failed to update item", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
-  async delete(item: T): Promise<T> {
-    return null;
+  async softDelete(item: T): Promise<DeleteResult> {
+    try {
+      const savedItem = await this.findById((item as any).id);
+
+      if (!savedItem) {
+        throw new HttpException("Item not found", HttpStatus.NOT_FOUND);
+      }
+
+      return await this.baseRepository.softDelete((item as any).id);
+    } catch (error) {
+      this.logger.error(error);
+      throw new HttpException("Failed to delete item", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async delete(item: T): Promise<DeleteResult> {
+    try {
+      const savedItem = await this.findById((item as any).id);
+
+      if (!savedItem) {
+        throw new HttpException("Item not found", HttpStatus.NOT_FOUND);
+      }
+
+      return await this.baseRepository.delete((item as any).id);
+    } catch (error) {
+      this.logger.error(error);
+      throw new HttpException("Failed to delete item", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   async findById(id: number): Promise<T | null> {
-    return null;
+    try {
+      let query = { where: { id } } as any;
+      return await this.baseRepository.findOne(query);
+    } catch (error) {
+      this.logger.error(error);
+      throw new HttpException("Failed to find item", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
-  async findAll(query: any): Promise<null> {
-    return null;
+  // Will be refactored to correctly implement pagination, filter and search
+  async findAll(query: any = {}): Promise<T[]> {
+    try {
+      return await this.baseRepository.find(query);
+    } catch (error) {
+      this.logger.error(error);
+      throw new HttpException("Failed to find items", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 }

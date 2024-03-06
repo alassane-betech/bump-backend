@@ -4,7 +4,7 @@ import { Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 
-// @Injectable
+@Injectable()
 export class UserService extends BaseService<UserEntity> {
   protected name = "app.users";
   protected readonly logger = new Logger(UserService.name);
