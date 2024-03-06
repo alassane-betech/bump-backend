@@ -1,0 +1,6 @@
+export enum CategoryEnum {
+  AMATEUR = "AMATEUR",
+  INTERMEDIATE = "INTERMEDIATE",
+  ADVANCED = "ADVANCED",
+  RESTAURANT = "RESTAURANT"
+}
