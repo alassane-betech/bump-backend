@@ -1,6 +1,6 @@
 import { BaseModel } from "src/base/entities/base.entity";
 import { Column, Entity } from "typeorm";
-import { CategoryEnum } from "./category.enum";
+import { UserCategoryEnum } from "../enums/user-category.enum";
 
 @Entity("users", { orderBy: { createdAt: "DESC" } })
 export class UserEntity extends BaseModel {
@@ -21,10 +21,10 @@ export class UserEntity extends BaseModel {
 
   @Column({
     type: "enum",
-    enum: CategoryEnum,
-    default: CategoryEnum.AMATEUR // Default category for new users
+    enum: UserCategoryEnum,
+    default: UserCategoryEnum.AMATEUR // Default category for new users
   })
-  category: CategoryEnum;
+  category: UserCategoryEnum;
 
   @Column({ nullable: true })
   profilPicture: string;

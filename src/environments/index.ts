@@ -7,4 +7,5 @@ export const PORT = process.env.PORT,
   DATABASE_USER = process.env.DATABASE_USER,
   DATABASE_PASSWORD = process.env.DATABASE_PASSWORD,
   DATABASE_NAME = process.env.DATABASE_NAME,
-  DATABASE_LOGGING = Boolean(process.env.DATABASE_LOGGING);
+  DATABASE_LOGGING = Boolean(process.env.DATABASE_LOGGING),
+  SERVICE_PREFIX = process.env.SERVICE_PREFIX;

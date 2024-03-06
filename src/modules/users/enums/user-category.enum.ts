@@ -1,4 +1,4 @@
-export enum CategoryEnum {
+export enum UserCategoryEnum {
   AMATEUR = "AMATEUR",
   INTERMEDIATE = "INTERMEDIATE",
   ADVANCED = "ADVANCED",
