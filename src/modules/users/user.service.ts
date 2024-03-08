@@ -18,21 +18,33 @@ export class UserService extends BaseService<UserEntity> {
     super(repository);
   }
 
-  async createUser({ email, password: plainTextPassword, ...rest }: CreateUserDto) {
+  async createUser({ username, email, password: plainTextPassword, ...rest }: CreateUserDto) {
     const isEmailExist = await this.isEmailExist(email);
 
     if (isEmailExist) {
       throw new ConflictException("Email already exist");
     }
 
+    const isUsernameExist = await this.isUsernameExist(username);
+
+    if (isUsernameExist) {
+      throw new ConflictException("Username already exist");
+    }
+
     const password = await hashPassword(plainTextPassword);
 
-    return super.create({ email, password, ...rest });
+    return super.create({ username, email, password, ...rest });
   }
 
   async isEmailExist(email: string) {
     const foundEmail = await this.repository.findOneBy({ email });
 
     return !!foundEmail;
+  }
+
+  async isUsernameExist(username: string) {
+    const foundUsername = await this.repository.findOneBy({ username });
+
+    return !!foundUsername;
   }
 }
