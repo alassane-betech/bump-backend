@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Logger } from "@nestjs/common";
-import { BaseEntity, DeepPartial, DeleteResult, Repository } from "typeorm";
+import { BaseEntity, DeepPartial, DeleteResult, FindOneOptions, FindOptionsWhere, Repository } from "typeorm";
 import { IBaseService } from "../interfaces/base.service.interface";
 
 export abstract class BaseService<T extends BaseEntity> implements IBaseService<T> {
@@ -68,7 +68,7 @@ export abstract class BaseService<T extends BaseEntity> implements IBaseService<
     }
   }
 
-  async findById(id: number): Promise<T | null> {
+  async findById(id: number): Promise<T> {
     try {
       let query = { where: { id } } as any;
       return await this.baseRepository.findOne(query);
@@ -85,6 +85,33 @@ export abstract class BaseService<T extends BaseEntity> implements IBaseService<
     } catch (error) {
       this.logger.error(error);
       throw new HttpException("Failed to find items", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async findOne(options: FindOneOptions<T>): Promise<T> {
+    try {
+      return await this.baseRepository.findOne(options);
+    } catch (error) {
+      this.logger.error(error);
+      throw new HttpException("Failed to find item", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async findOneBy(where: FindOptionsWhere<T>): Promise<T> {
+    try {
+      return await this.baseRepository.findOneBy(where);
+    } catch (error) {
+      this.logger.error(error);
+      throw new HttpException("Failed to find item", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async existBy(where: FindOptionsWhere<T>): Promise<boolean> {
+    try {
+      return await this.baseRepository.existsBy(where);
+    } catch (error) {
+      this.logger.error(error);
+      throw new HttpException("Failed to find item", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }
