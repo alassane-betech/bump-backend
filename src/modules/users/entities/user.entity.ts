@@ -10,10 +10,10 @@ export class UserEntity extends BaseModel {
   @Column({ length: 100, nullable: true })
   lastname: string;
 
-  @Column({ length: 100, nullable: true })
+  @Column({ length: 100, unique: true })
   username: string;
 
-  @Column({ length: 100, unique: true, nullable: true })
+  @Column({ length: 100, unique: true })
   email: string;
 
   @Column({ length: 10, nullable: true })
