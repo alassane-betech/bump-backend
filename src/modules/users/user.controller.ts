@@ -21,4 +21,9 @@ export class UserController {
   async validateEmail(@Query("email") email: string): Promise<boolean> {
     return !(await this.userService.isEmailExist(email));
   }
+
+  @Get("validate-username")
+  async validateUsername(@Query("username") username: string): Promise<boolean> {
+    return !(await this.userService.isUsernameExist(username));
+  }
 }
