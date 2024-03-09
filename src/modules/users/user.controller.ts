@@ -11,9 +11,4 @@ export class UserController {
   getHello(): string {
     return "Hello World!";
   }
-
-  @Post()
-  create(@Body() createUserDto: CreateUserDto): Promise<UserEntity> {
-    return this.userService.createUser(createUserDto);
-  }
 }

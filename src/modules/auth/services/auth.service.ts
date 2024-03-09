@@ -1,12 +1,4 @@
-import {
-  ConflictException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-  Logger,
-  NotFoundException,
-  UnauthorizedException
-} from "@nestjs/common";
+import { Inject, Injectable, Logger, NotFoundException, UnauthorizedException, forwardRef } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import { BcryptService } from "./bcrypt.service";
 import { UserService } from "src/modules/users/user.service";
@@ -22,6 +14,7 @@ export class AuthService {
   protected readonly logger = new Logger(AuthService.name);
 
   constructor(
+    @Inject(forwardRef(() => UserService))
     private readonly userService: UserService,
     private readonly bcryptService: BcryptService,
     private readonly jwtService: JwtService
@@ -56,22 +49,7 @@ export class AuthService {
 
   async register(registerDto: RegisterDto): Promise<AuthResponse> {
     try {
-      const { email, username, password } = registerDto;
-
-      const emailExist = await this.userService.existBy({ email });
-      if (emailExist) {
-        throw new ConflictException(`Email ${email} is already in use`);
-      }
-
-      const usernameExist = await this.userService.existBy({ username });
-      if (usernameExist) {
-        throw new ConflictException(`Username ${username} is already in use.`);
-      }
-
-      const hashedPassword = await this.bcryptService.hashPassword(password);
-      registerDto.password = hashedPassword;
-
-      const user: UserEntity = await this.userService.create(registerDto);
+      const user: UserEntity = await this.userService.createUser(registerDto);
 
       const token = await this.generateJwtToken(user);
 
@@ -108,8 +86,8 @@ export class AuthService {
     }
   }
 
-  async generateJwtToken(user: UserEntity, roles: string[] = []): Promise<string> {
-    const { id, username, email, firstname, lastname, category, profilPicture } = user;
+  async generateJwtToken(user: UserEntity): Promise<string> {
+    const { id, username, email, firstname, lastname, category } = user;
 
     const payload = {
       user: {
@@ -119,8 +97,7 @@ export class AuthService {
         firstname,
         lastname,
         category,
-        profilPicture,
-        roles
+        role: category
       }
     };
 

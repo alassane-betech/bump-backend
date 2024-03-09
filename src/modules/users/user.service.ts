@@ -1,24 +1,24 @@
 import { ConflictException, Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { BaseService } from "src/base/services/base.service";
-import { hashPassword } from "src/utils/password";
 import { Repository } from "typeorm";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UserEntity } from "./entities/user.entity";
+import { BcryptService } from "../auth/services/bcrypt.service";
 
 @Injectable()
 export class UserService extends BaseService<UserEntity> {
-  protected name = "app.users";
   protected readonly logger = new Logger(UserService.name);
 
   constructor(
     @InjectRepository(UserEntity)
-    private repository: Repository<UserEntity>
+    private repository: Repository<UserEntity>,
+    private readonly bcryptService: BcryptService
   ) {
     super(repository);
   }
 
-  async createUser({ username, email, password: plainTextPassword, ...rest }: CreateUserDto) {
+  async createUser({ username, email, password: plainTextPassword, ...rest }: CreateUserDto): Promise<UserEntity> {
     const isEmailExist = await this.isEmailExist(email);
 
     if (isEmailExist) {
@@ -31,7 +31,7 @@ export class UserService extends BaseService<UserEntity> {
       throw new ConflictException("Username already exist");
     }
 
-    const password = await hashPassword(plainTextPassword);
+    const password = await this.bcryptService.hashPassword(plainTextPassword);
 
     return super.create({ username, email, password, ...rest });
   }
