@@ -8,8 +8,8 @@ import {
 } from "typeorm";
 
 export abstract class BaseModel extends BaseEntity {
-  @PrimaryGeneratedColumn({ type: "int", name: "id" })
-  id: number;
+  @PrimaryGeneratedColumn("uuid", { name: "id" })
+  id: string;
 
   @Column({ name: "activated", type: "boolean", default: true })
   activated: boolean;
