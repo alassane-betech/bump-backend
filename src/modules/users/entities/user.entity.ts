@@ -5,10 +5,10 @@ import { UserCategoryEnum } from "../enums/user-category.enum";
 @Entity("users", { orderBy: { createdAt: "DESC" } })
 export class UserEntity extends BaseModel {
   @Column({ length: 100, nullable: true })
-  firstName: string;
+  firstname: string;
 
   @Column({ length: 100, nullable: true })
-  lastName: string;
+  lastname: string;
 
   @Column({ length: 100, nullable: true })
   username: string;
@@ -17,7 +17,7 @@ export class UserEntity extends BaseModel {
   email: string;
 
   @Column({ length: 10, nullable: true })
-  birthDate: string;
+  birthdate: string;
 
   @Column({
     type: "enum",
