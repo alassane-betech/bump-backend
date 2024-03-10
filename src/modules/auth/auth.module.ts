@@ -5,6 +5,7 @@ import { JWT_SECRET_KEY } from "src/environments";
 import { AuthService } from "./services/auth.service";
 import { AuthController } from "./auth.controller";
 import { BcryptService } from "./services/bcrypt.service";
+import { JwtStrategy } from "./jwt.strategy";
 
 @Module({
   imports: [
@@ -15,7 +16,7 @@ import { BcryptService } from "./services/bcrypt.service";
       signOptions: { expiresIn: "30d" }
     })
   ],
-  providers: [AuthService, BcryptService],
+  providers: [AuthService, BcryptService, JwtStrategy],
   controllers: [AuthController],
   exports: [AuthService, BcryptService]
 })

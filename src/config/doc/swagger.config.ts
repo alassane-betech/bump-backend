@@ -4,9 +4,8 @@ export const swaggerConfig = new DocumentBuilder()
   .setTitle("BUMP API")
   .setDescription("Put some description here")
   .setVersion("1.0")
-  // .addTag('')
   .setContact("Alassane Fall", "https://www.be-tech.co/", "alassane@be-tech.co")
-  .addBearerAuth({ type: "http", name: "Authorization", scheme: "bearer", in: "header" }, "jwt")
+  .addBearerAuth()
   .build();
 
 export const swaggerOptions: SwaggerCustomOptions = {

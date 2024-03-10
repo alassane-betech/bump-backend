@@ -5,7 +5,7 @@ export interface IBaseService<T> {
   update(item: T): Promise<T>;
   softDelete(item: T): Promise<DeleteResult>;
   delete(item: T): Promise<DeleteResult>;
-  findById(id: number): Promise<T>;
+  findById(id: string): Promise<T>;
   findAll(query: any): Promise<T[]>;
   findOne(options: FindOneOptions<T>): Promise<T>;
   findOneBy(where: FindOptionsWhere<T>): Promise<T>;
