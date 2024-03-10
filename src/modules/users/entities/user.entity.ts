@@ -31,4 +31,10 @@ export class UserEntity extends BaseModel {
 
   @Column({ nullable: true })
   password: string;
+
+  @Column({ nullable: true, default: 0 })
+  following: number;
+
+  @Column({ nullable: true, default: 0 })
+  followers: number;
 }
