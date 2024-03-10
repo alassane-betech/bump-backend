@@ -1,14 +1,20 @@
-import { Body, Controller, Get, Post } from "@nestjs/common";
+import { Body, Controller, Get, Post, Query } from "@nestjs/common";
 import { CreateUserDto } from "./dto/create-user.dto";
-import { UserService } from "./user.service";
 import { UserEntity } from "./entities/user.entity";
+import { UserService } from "./user.service";
 
 @Controller("users")
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get()
-  getHello(): string {
-    return "Hello World!";
+  @Get("validate-email")
+  async validateEmail(@Query("email") email: string): Promise<boolean> {
+    return !(await this.userService.isEmailExist(email));
   }
+
+  @Get("validate-username")
+  async validateUsername(@Query("username") username: string): Promise<boolean> {
+    return !(await this.userService.isUsernameExist(username));
+  }
+
 }
