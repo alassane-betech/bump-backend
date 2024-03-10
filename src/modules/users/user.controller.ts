@@ -7,16 +7,6 @@ import { UserService } from "./user.service";
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get()
-  getHello(): string {
-    return "Hello World!";
-  }
-
-  @Post()
-  create(@Body() createUserDto: CreateUserDto): Promise<UserEntity> {
-    return this.userService.createUser(createUserDto);
-  }
-
   @Get("validate-email")
   async validateEmail(@Query("email") email: string): Promise<boolean> {
     return !(await this.userService.isEmailExist(email));
@@ -26,4 +16,5 @@ export class UserController {
   async validateUsername(@Query("username") username: string): Promise<boolean> {
     return !(await this.userService.isUsernameExist(username));
   }
+
 }
