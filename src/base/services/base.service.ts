@@ -68,7 +68,7 @@ export abstract class BaseService<T extends BaseEntity> implements IBaseService<
     }
   }
 
-  async findById(id: number): Promise<T> {
+  async findById(id: string): Promise<T> {
     try {
       let query = { where: { id } } as any;
       return await this.baseRepository.findOne(query);

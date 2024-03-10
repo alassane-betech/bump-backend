@@ -8,6 +8,7 @@ import { ChangePasswordDto } from "../dto/change-password.dto";
 import { AuthResponse } from "src/utils/http/responses/auth.reponse";
 import { HttpCustomResponse } from "src/utils/http/responses/http-custom.response";
 import { RegisterDto } from "../dto/register.dto";
+import { IJwtPayload } from "../interfaces/jwt-payload.interface";
 
 @Injectable()
 export class AuthService {
@@ -89,18 +90,20 @@ export class AuthService {
   async generateJwtToken(user: UserEntity): Promise<string> {
     const { id, username, email, firstname, lastname, category } = user;
 
-    const payload = {
-      user: {
-        sub: id,
-        username,
-        email,
-        firstname,
-        lastname,
-        category,
-        role: category
-      }
+    const payload: IJwtPayload = {
+      sub: id,
+      username,
+      email,
+      firstname,
+      lastname,
+      role: category
     };
 
     return this.jwtService.signAsync(payload);
+  }
+
+  async validateUser(payload: IJwtPayload) {
+    const { sub } = payload;
+    return await this.userService.findById(sub);
   }
 }
