@@ -27,12 +27,12 @@ export class FollowerService extends BaseService<FollowerEntity> {
         throw new ConflictException("This operation is not allowed !");
       }
 
-      const followed: UserEntity = await this.userService.findById(followDto.userId);
-      if (!followed) {
+      const following: UserEntity = await this.userService.findById(followDto.userId);
+      if (!following) {
         throw new NotFoundException(`User not found with id: ${followDto.userId}`);
       }
 
-      const didFollow: boolean = await this.existBy({ followerId: currentUser.id, followedId: followed.id });
+      const didFollow: boolean = await this.existBy({ followerId: currentUser.id, followingId: following.id });
 
       if (didFollow) {
         throw new ConflictException(`You already followed user with id ${followDto.userId}`);
@@ -40,15 +40,15 @@ export class FollowerService extends BaseService<FollowerEntity> {
 
       const follow: FollowerEntity = new FollowerEntity();
       follow.follower = currentUser;
-      follow.followed = followed;
+      follow.following = following;
 
-      ++currentUser.following;
-      ++followed.followers;
+      ++currentUser.totalFollowing;
+      ++following.totalFollowers;
 
       await this.dataSource.transaction(async (manager) => {
         manager.save(follow);
         manager.save(currentUser);
-        manager.save(followed);
+        manager.save(following);
       });
 
       return new HttpCustomResponse("Successfully followed user.", follow);
@@ -60,24 +60,24 @@ export class FollowerService extends BaseService<FollowerEntity> {
 
   async unfollow(currentUser: UserEntity, followDto: FollowDto): Promise<HttpCustomResponse> {
     try {
-      const followed: UserEntity = await this.userService.findById(followDto.userId);
-      if (!followed) {
+      const following: UserEntity = await this.userService.findById(followDto.userId);
+      if (!following) {
         throw new NotFoundException(`User not found with id: ${followDto.userId}`);
       }
 
-      const follow: FollowerEntity = await this.findOneBy({ followerId: currentUser.id, followedId: followed.id });
+      const follow: FollowerEntity = await this.findOneBy({ followerId: currentUser.id, followingId: following.id });
 
       if (!follow) {
-        throw new NotFoundException(`You're not following user with id ${followed.id}`);
+        throw new NotFoundException(`You're not following user with id ${following.id}`);
       }
 
-      --currentUser.following;
-      --followed.followers;
+      --currentUser.totalFollowing;
+      --following.totalFollowers;
 
       await this.dataSource.transaction(async (manager) => {
         manager.delete(FollowerEntity, { id: follow.id });
         manager.save(currentUser);
-        manager.save(followed);
+        manager.save(following);
       });
 
       return new HttpCustomResponse("Successfully unfollowed user.", null);

@@ -13,10 +13,10 @@ export class FollowerEntity extends BaseModel {
   followerId: string;
 
   @ManyToOne(() => UserEntity)
-  @JoinColumn({ name: "followedId" })
-  followed: UserEntity;
+  @JoinColumn({ name: "followingId" })
+  following: UserEntity;
 
   @Index()
   @Column("uuid")
-  followedId: string;
+  followingId: string;
 }
