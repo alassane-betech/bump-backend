@@ -17,7 +17,14 @@ export class FollowerController {
   @Post("add")
   follow(@Req() req, @Body() followDto: FollowDto): Promise<HttpCustomResponse> {
     const currentUser = req.user;
-    console.log("currentUser => ", currentUser);
     return this.service.addFollow(currentUser, followDto);
+  }
+
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Post("delete")
+  unfollow(@Req() req, @Body() followDto: FollowDto): Promise<HttpCustomResponse> {
+    const currentUser = req.user;
+    return this.service.unfollow(currentUser, followDto);
   }
 }

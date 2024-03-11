@@ -51,7 +51,36 @@ export class FollowerService extends BaseService<FollowerEntity> {
         manager.save(followed);
       });
 
-      return new HttpCustomResponse("User successfully created.", follow);
+      return new HttpCustomResponse("Successfully followed user.", follow);
+    } catch (error) {
+      this.logger.error(error);
+      throw error;
+    }
+  }
+
+  async unfollow(currentUser: UserEntity, followDto: FollowDto): Promise<HttpCustomResponse> {
+    try {
+      const followed: UserEntity = await this.userService.findById(followDto.userId);
+      if (!followed) {
+        throw new NotFoundException(`User not found with id: ${followDto.userId}`);
+      }
+
+      const follow: FollowerEntity = await this.findOneBy({ followerId: currentUser.id, followedId: followed.id });
+
+      if (!follow) {
+        throw new NotFoundException(`You're not following user with id ${followed.id}`);
+      }
+
+      --currentUser.following;
+      --followed.followers;
+
+      await this.dataSource.transaction(async (manager) => {
+        manager.delete(FollowerEntity, { id: follow.id });
+        manager.save(currentUser);
+        manager.save(followed);
+      });
+
+      return new HttpCustomResponse("Successfully unfollowed user.", null);
     } catch (error) {
       this.logger.error(error);
       throw error;
