@@ -33,8 +33,8 @@ export class UserEntity extends BaseModel {
   password: string;
 
   @Column({ nullable: true, default: 0 })
-  following: number;
+  totalFollowing: number;
 
   @Column({ nullable: true, default: 0 })
-  followers: number;
+  totalFollowers: number;
 }
