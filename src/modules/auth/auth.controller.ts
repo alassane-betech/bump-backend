@@ -4,7 +4,6 @@ import { AuthService } from "./services/auth.service";
 import { LoginDto } from "./dto/login.dto";
 import { AuthResponse } from "src/utils/http/responses/auth.reponse";
 import { ChangePasswordDto } from "./dto/change-password.dto";
-import { HttpCustomResponse } from "src/utils/http/responses/http-custom.response";
 import { RegisterDto } from "./dto/register.dto";
 
 @ApiTags("auth")
@@ -23,7 +22,7 @@ export class AuthController {
   }
 
   @Post("change-password")
-  async changePassword(@Body() itemDto: ChangePasswordDto): Promise<HttpCustomResponse> {
+  async changePassword(@Body() itemDto: ChangePasswordDto): Promise<AuthResponse> {
     return await this.authService.changePassword(itemDto);
   }
 }
