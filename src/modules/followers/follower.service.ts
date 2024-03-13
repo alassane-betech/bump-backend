@@ -51,7 +51,7 @@ export class FollowerService extends BaseService<FollowerEntity> {
         manager.save(following);
       });
 
-      return new HttpCustomResponse("Successfully followed user.", follow);
+      return new HttpCustomResponse(follow);
     } catch (error) {
       this.logger.error(error);
       throw error;
@@ -80,7 +80,7 @@ export class FollowerService extends BaseService<FollowerEntity> {
         manager.save(following);
       });
 
-      return new HttpCustomResponse("Successfully unfollowed user.", null);
+      return new HttpCustomResponse(follow);
     } catch (error) {
       this.logger.error(error);
       throw error;
