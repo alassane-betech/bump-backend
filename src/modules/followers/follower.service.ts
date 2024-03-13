@@ -2,10 +2,9 @@ import { ConflictException, Injectable, Logger, NotFoundException } from "@nestj
 import { BaseService } from "src/base/services/base.service";
 import { FollowerEntity } from "./entities/follower.entity";
 import { InjectRepository } from "@nestjs/typeorm";
-import { DataSource, Repository } from "typeorm";
+import { DataSource, Repository, Transaction } from "typeorm";
 import { UserEntity } from "../users/entities/user.entity";
 import { FollowDto } from "./dto/follow.dto";
-import { HttpCustomResponse } from "src/utils/http/responses/http-custom.response";
 import { UserService } from "../users/user.service";
 
 @Injectable()
@@ -21,7 +20,7 @@ export class FollowerService extends BaseService<FollowerEntity> {
     super(repository);
   }
 
-  async addFollow(currentUser: UserEntity, followDto: FollowDto): Promise<HttpCustomResponse> {
+  async addFollow(currentUser: UserEntity, followDto: FollowDto): Promise<FollowerEntity> {
     try {
       if (currentUser.id == followDto.userId) {
         throw new ConflictException("This operation is not allowed !");
@@ -38,27 +37,31 @@ export class FollowerService extends BaseService<FollowerEntity> {
         throw new ConflictException(`You already followed user with id ${followDto.userId}`);
       }
 
-      const follow: FollowerEntity = new FollowerEntity();
+      let follow: FollowerEntity = new FollowerEntity();
       follow.follower = currentUser;
       follow.following = following;
 
       ++currentUser.totalFollowing;
       ++following.totalFollowers;
 
-      await this.dataSource.transaction(async (manager) => {
-        manager.save(follow);
-        manager.save(currentUser);
-        manager.save(following);
-      });
+      await this.dataSource
+        .transaction(async (manager) => {
+          follow = await manager.save(follow);
+          await manager.save(currentUser);
+          await manager.save(following);
+        })
+        .then((value) => {
+          console.log("Value here => ", value);
+        });
 
-      return new HttpCustomResponse(follow);
+      return follow;
     } catch (error) {
       this.logger.error(error);
       throw error;
     }
   }
 
-  async unfollow(currentUser: UserEntity, followDto: FollowDto): Promise<HttpCustomResponse> {
+  async unfollow(currentUser: UserEntity, followDto: FollowDto): Promise<FollowerEntity> {
     try {
       const following: UserEntity = await this.userService.findById(followDto.userId);
       if (!following) {
@@ -75,12 +78,12 @@ export class FollowerService extends BaseService<FollowerEntity> {
       --following.totalFollowers;
 
       await this.dataSource.transaction(async (manager) => {
-        manager.delete(FollowerEntity, { id: follow.id });
-        manager.save(currentUser);
-        manager.save(following);
+        await manager.delete(FollowerEntity, { id: follow.id });
+        await manager.save(currentUser);
+        await manager.save(following);
       });
 
-      return new HttpCustomResponse(follow);
+      return follow;
     } catch (error) {
       this.logger.error(error);
       throw error;

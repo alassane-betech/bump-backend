@@ -3,7 +3,7 @@ import { FollowerService } from "./follower.service";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { FollowDto } from "./dto/follow.dto";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
-import { HttpCustomResponse } from "src/utils/http/responses/http-custom.response";
+import { FollowerEntity } from "./entities/follower.entity";
 
 @ApiTags("followers")
 @Controller("followers")
@@ -15,7 +15,7 @@ export class FollowerController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Post("add")
-  follow(@Req() req, @Body() followDto: FollowDto): Promise<HttpCustomResponse> {
+  follow(@Req() req, @Body() followDto: FollowDto): Promise<FollowerEntity> {
     const currentUser = req.user;
     return this.service.addFollow(currentUser, followDto);
   }
@@ -23,7 +23,7 @@ export class FollowerController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Post("delete")
-  unfollow(@Req() req, @Body() followDto: FollowDto): Promise<HttpCustomResponse> {
+  unfollow(@Req() req, @Body() followDto: FollowDto): Promise<FollowerEntity> {
     const currentUser = req.user;
     return this.service.unfollow(currentUser, followDto);
   }
