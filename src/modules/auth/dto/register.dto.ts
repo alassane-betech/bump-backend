@@ -34,7 +34,11 @@ export class RegisterDto {
   )
   birthdate: string;
 
-  @ApiProperty()
-  @IsEnum(UserCategoryEnum)
+  @ApiProperty({
+    default: UserCategoryEnum.AMATEUR,
+    type: UserCategoryEnum,
+    enum: UserCategoryEnum
+  })
+  @IsEnum(UserCategoryEnum, { message: "User category is not valid" })
   category: UserCategoryEnum;
 }
