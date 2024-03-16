@@ -27,7 +27,7 @@ export class UserEntity extends BaseModel {
   category: UserCategoryEnum;
 
   @Column({ nullable: true })
-  profilPicture: string;
+  profilePicture: string;
 
   @Column({ nullable: true })
   password: string;
@@ -37,4 +37,10 @@ export class UserEntity extends BaseModel {
 
   @Column({ nullable: true, default: 0 })
   totalFollowers: number;
+
+  @Column({ default: 0 })
+  points: number;
+
+  @Column({ nullable: true })
+  description: string;
 }
