@@ -6,9 +6,10 @@ import { AuthModule } from "./modules/auth/auth.module";
 import { FollowerModule } from "./modules/followers/follower.module";
 import { APP_FILTER } from "@nestjs/core";
 import { HttpExceptionFilter } from "./exceptions/http-exception.filter";
+import { BattleModule } from "./modules/battles/battle.module";
 
 @Module({
-  imports: [TypeOrmModule.forRoot(ORM_CONFIG), UserModule, AuthModule, FollowerModule],
+  imports: [TypeOrmModule.forRoot(ORM_CONFIG), UserModule, AuthModule, FollowerModule, BattleModule],
   controllers: [],
   providers: [
     {
