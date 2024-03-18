@@ -1,6 +1,6 @@
 import { BaseModel } from "src/base/entities/base.entity";
 import { UserEntity } from "src/modules/users/entities/user.entity";
-import { Column, Entity, Index, JoinColumn, ManyToOne } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
 import { BattleStatusEnum } from "../enums/battle-status.enum";
 
 @Entity("battles", { orderBy: { createdAt: "DESC" } })
