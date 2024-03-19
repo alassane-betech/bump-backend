@@ -1,10 +1,11 @@
 import { ConflictException, Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { BaseService } from "src/base/services/base.service";
-import { Repository } from "typeorm";
+import { Equal, Not, Repository } from "typeorm";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UserEntity } from "./entities/user.entity";
 import { BcryptService } from "../auth/services/bcrypt.service";
+import { UpdateUserProfileDto } from "./dto/update-user-profile.dto";
 
 @Injectable()
 export class UserService extends BaseService<UserEntity> {
@@ -46,5 +47,16 @@ export class UserService extends BaseService<UserEntity> {
     const foundUsername = await this.repository.findOneBy({ username });
 
     return !!foundUsername;
+  }
+
+  async updateMyProfileInfos({ id }: UserEntity, payload: UpdateUserProfileDto) {
+    if (payload.username) {
+      const isUsernameExist = await this.existBy({ id: Not(Equal(id)), username: payload.username });
+
+      if (isUsernameExist) {
+        throw new ConflictException("Username already exist");
+      }
+    }
+    return this.update({ id, ...payload });
   }
 }
