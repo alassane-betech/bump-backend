@@ -1,6 +1,8 @@
 import { HttpException, HttpStatus, Logger } from "@nestjs/common";
 import { BaseEntity, DeepPartial, DeleteResult, FindOneOptions, FindOptionsWhere, Repository } from "typeorm";
 import { IBaseService } from "../interfaces/base.service.interface";
+import { IPage, paginate } from "src/core/pagination";
+import { PageOptionsDto } from "src/core/pagination/dto/page-options.dto";
 
 export abstract class BaseService<T extends BaseEntity> implements IBaseService<T> {
   protected readonly logger = new Logger(BaseService.name);
@@ -70,7 +72,7 @@ export abstract class BaseService<T extends BaseEntity> implements IBaseService<
 
   async findById(id: string): Promise<T> {
     try {
-      let query = { where: { id } } as any;
+      const query = { where: { id } } as any;
       return await this.baseRepository.findOne(query);
     } catch (error) {
       this.logger.error(error);
@@ -112,6 +114,15 @@ export abstract class BaseService<T extends BaseEntity> implements IBaseService<
     } catch (error) {
       this.logger.error(error);
       throw new HttpException("Failed to find item", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async paginate(pageOpttions: PageOptionsDto, where: FindOptionsWhere<T>): Promise<IPage<T>> {
+    try {
+      return paginate(this.baseRepository, pageOpttions, where);
+    } catch (error) {
+      this.logger.error(error);
+      throw new HttpException("Failed to find items", HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }
