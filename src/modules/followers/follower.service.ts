@@ -1,11 +1,11 @@
 import { ConflictException, Injectable, Logger, NotFoundException } from "@nestjs/common";
-import { BaseService } from "src/base/services/base.service";
-import { FollowerEntity } from "./entities/follower.entity";
 import { InjectRepository } from "@nestjs/typeorm";
-import { DataSource, Repository, Transaction } from "typeorm";
+import { BaseService } from "src/base/services/base.service";
+import { DataSource, Repository } from "typeorm";
 import { UserEntity } from "../users/entities/user.entity";
-import { FollowDto } from "./dto/follow.dto";
 import { UserService } from "../users/user.service";
+import { FollowDto } from "./dto/follow.dto";
+import { FollowerEntity } from "./entities/follower.entity";
 
 @Injectable()
 export class FollowerService extends BaseService<FollowerEntity> {
@@ -88,5 +88,30 @@ export class FollowerService extends BaseService<FollowerEntity> {
       this.logger.error(error);
       throw error;
     }
+  }
+
+  getUserFollowers(user: UserEntity) {
+    return this.dataSource
+      .getRepository(UserEntity)
+      .createQueryBuilder("users")
+      .innerJoin(
+        "followers",
+        "followers",
+        "followers.followingId = users.id AND followers.followingId = :followingId",
+        {
+          followingId: user.id
+        }
+      )
+      .getMany();
+  }
+
+  getUserFollowing(user: UserEntity) {
+    return this.dataSource
+      .getRepository(UserEntity)
+      .createQueryBuilder("users")
+      .innerJoin("followers", "followers", "followers.followerId = users.id AND followers.followerId = :followerId", {
+        followerId: user.id
+      })
+      .getMany();
   }
 }
