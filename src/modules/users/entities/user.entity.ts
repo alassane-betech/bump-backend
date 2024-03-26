@@ -1,6 +1,7 @@
 import { BaseModel } from "src/base/entities/base.entity";
-import { Column, Entity } from "typeorm";
+import { Column, Entity, OneToMany } from "typeorm";
 import { UserCategoryEnum } from "../enums/user-category.enum";
+import { FollowerEntity } from "src/modules/followers/entities/follower.entity";
 
 @Entity("users", { orderBy: { createdAt: "DESC" } })
 export class UserEntity extends BaseModel {
@@ -43,4 +44,10 @@ export class UserEntity extends BaseModel {
 
   @Column({ nullable: true })
   description: string;
+
+  @OneToMany(() => FollowerEntity, (follows) => follows.follower)
+  followers: FollowerEntity[];
+
+  @OneToMany(() => FollowerEntity, (follows) => follows.following)
+  followings: FollowerEntity[];
 }

@@ -2,7 +2,7 @@ import { ConflictException, Injectable, Logger, NotFoundException } from "@nestj
 import { BaseService } from "src/base/services/base.service";
 import { FollowerEntity } from "./entities/follower.entity";
 import { InjectRepository } from "@nestjs/typeorm";
-import { DataSource, Repository, Transaction } from "typeorm";
+import { DataSource, Repository } from "typeorm";
 import { UserEntity } from "../users/entities/user.entity";
 import { FollowDto } from "./dto/follow.dto";
 import { UserService } from "../users/user.service";
