@@ -96,29 +96,36 @@ export class UserService extends BaseService<UserEntity> {
     }
   }
 
-  // async findAllFollowingsByUserId(userId: string, pageOption: PageOptionsDto): Promise<IPage<UserEntity>>{
+  async findAllFollowingsByUserId(userId: string, pageOption: PageOptionsDto): Promise<IPage<UserEntity>> {
+    try {
+      const { skip, take } = pageOption;
 
-  //   try {
+      const [users, total] = await this.repository
+        .createQueryBuilder("users")
+        .innerJoinAndSelect("users.followings", "followings")
+        .where("followings.followerId = :userId", { userId })
+        .skip(skip)
+        .take(take)
+        .select([
+          "users.id",
+          "users.createdAt",
+          "users.firstname",
+          "users.lastname",
+          "users.username",
+          "users.description",
+          "users.profilePicture",
+          "users.points",
+          "users.totalFollowing",
+          "users.totalFollowers"
+        ])
+        .getManyAndCount();
 
-  //     const {skip, take} = pageOption;
+      const meta: PageMetaDto = new PageMetaDto(pageOption, total, users.length);
 
-  //     const [users, total] = await this.repository
-  //       .createQueryBuilder('users')
-  //       .innerJoinAndSelect('users.followings', 'followings')
-  //       .where('followings.followerId = :userId', { userId })
-  //       .skip(skip)
-  //       .take(take)
-  //       .select(['users.id','users.createdAt','users.firstname','users.lastname','users.username','users.description','users.profilePicture','users.points','users.totalFollowing','users.totalFollowers'])
-  //       .getManyAndCount();
-
-  //     const meta: PageMetaDto = new PageMetaDto(pageOption, total, users.length);
-
-  //     return { data: users, meta };
-
-  //   } catch (error) {
-  //     this.logger.error(error);
-  //     throw error;
-  //   }
-
-  // }
+      return { data: users, meta };
+    } catch (error) {
+      this.logger.error(error);
+      throw error;
+    }
+  }
 }

@@ -43,8 +43,11 @@ export class UserController {
     return this.service.findAllFollowersByUserId(id, pageOptions);
   }
 
-  // @Get('followings/:id')
-  // findAllFollowingsByUserId(@Param('id') id: string, @Query('pageOptions') pageOptions: PageOptionsDto): Promise<IPage<UserEntity>> {
-  //   return this.service.findAllFollowingsByUserId(id,pageOptions);
-  // }
+  @Get("followings/:id")
+  findAllFollowingsByUserId(
+    @Param("id") id: string,
+    @Query("pageOptions") pageOptions: PageOptionsDto
+  ): Promise<IPage<UserEntity>> {
+    return this.service.findAllFollowingsByUserId(id, pageOptions);
+  }
 }
