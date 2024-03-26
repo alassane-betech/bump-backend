@@ -3,19 +3,19 @@ import { PageOptionsDto } from "./page-options.dto";
 
 export class PageMetaDto {
   @ApiProperty()
-  page: number;
+  totalItems: number;
 
   @ApiProperty()
-  take: number;
+  totalPages: number;
 
   @ApiProperty()
-  countPage: number;
+  currentItems: number;
 
   @ApiProperty()
-  countTotal: number;
+  itemsPerPage: number;
 
   @ApiProperty()
-  countCurrent: number;
+  currentPage: number;
 
   @ApiProperty()
   hasNextPage: boolean;
@@ -23,14 +23,13 @@ export class PageMetaDto {
   @ApiProperty()
   hasPreviousPage: boolean;
 
-  constructor(pageOptions: PageOptionsDto, countTotal: number, countCurrent: number) {
-    this.page = pageOptions.page;
-    this.take = pageOptions.take;
-    this.countTotal = countTotal;
-    this.countCurrent = countCurrent;
-    this.countPage = Math.ceil(this.countTotal / this.take);
-
-    this.hasPreviousPage = this.page > 1;
-    this.hasNextPage = this.page < this.countPage;
+  constructor(pageOptions: PageOptionsDto, total: number, currents: number) {
+    this.totalItems = total;
+    this.itemsPerPage = pageOptions.take;
+    this.totalPages = Math.ceil(this.totalItems / pageOptions.take);
+    this.currentItems = currents;
+    this.currentPage = pageOptions.page;
+    this.hasPreviousPage = this.currentPage > 1;
+    this.hasNextPage = this.currentPage < this.totalPages;
   }
 }

@@ -4,7 +4,7 @@ import { Column, Entity, Index, JoinColumn, ManyToOne } from "typeorm";
 
 @Entity("followers", { orderBy: { createdAt: "DESC" } })
 export class FollowerEntity extends BaseModel {
-  @ManyToOne(() => UserEntity)
+  @ManyToOne(() => UserEntity, (user) => user.followers)
   @JoinColumn({ name: "followerId" })
   follower: UserEntity;
 
@@ -12,7 +12,7 @@ export class FollowerEntity extends BaseModel {
   @Column("uuid")
   followerId: string;
 
-  @ManyToOne(() => UserEntity)
+  @ManyToOne(() => UserEntity, (user) => user.followings)
   @JoinColumn({ name: "followingId" })
   following: UserEntity;
 
