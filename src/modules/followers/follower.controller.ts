@@ -1,9 +1,11 @@
-import { Body, Controller, Logger, Param, Post, Req, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Logger, Param, Post, Req, UseGuards } from "@nestjs/common";
 import { FollowerService } from "./follower.service";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { FollowDto } from "./dto/follow.dto";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { FollowerEntity } from "./entities/follower.entity";
+import { CurrentUser } from "../auth/decorators/current-user.decorator";
+import { UserEntity } from "../users/entities/user.entity";
 
 @ApiTags("followers")
 @Controller("followers")
@@ -15,16 +17,14 @@ export class FollowerController {
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @Post("add")
-  follow(@Req() req, @Body() followDto: FollowDto): Promise<FollowerEntity> {
-    const currentUser = req.user;
+  follow(@CurrentUser() currentUser: UserEntity, @Body() followDto: FollowDto): Promise<FollowerEntity> {
     return this.service.addFollow(currentUser, followDto);
   }
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  @Post("delete")
-  unfollow(@Req() req, @Body() followDto: FollowDto): Promise<FollowerEntity> {
-    const currentUser = req.user;
+  @Delete("delete")
+  unfollow(@CurrentUser() currentUser: UserEntity, @Body() followDto: FollowDto): Promise<FollowerEntity> {
     return this.service.unfollow(currentUser, followDto);
   }
 }
