@@ -16,14 +16,14 @@ export class FollowerController {
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  @Post("add")
+  @Post()
   follow(@CurrentUser() currentUser: UserEntity, @Body() followDto: FollowDto): Promise<FollowerEntity> {
     return this.service.addFollow(currentUser, followDto);
   }
 
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  @Delete("delete")
+  @Delete()
   unfollow(@CurrentUser() currentUser: UserEntity, @Body() followDto: FollowDto): Promise<FollowerEntity> {
     return this.service.unfollow(currentUser, followDto);
   }
