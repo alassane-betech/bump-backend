@@ -8,9 +8,18 @@ import { APP_FILTER } from "@nestjs/core";
 import { HttpExceptionFilter } from "./exceptions/http-exception.filter";
 import { BattleModule } from "./modules/battles/battle.module";
 import { VoteModule } from "./modules/votes/vote.module";
+import { StorageModule } from "./modules/storages/storage.module";
 
 @Module({
-  imports: [TypeOrmModule.forRoot(ORM_CONFIG), UserModule, AuthModule, FollowerModule, BattleModule, VoteModule],
+  imports: [
+    TypeOrmModule.forRoot(ORM_CONFIG),
+    UserModule,
+    AuthModule,
+    FollowerModule,
+    BattleModule,
+    VoteModule,
+    StorageModule
+  ],
   controllers: [],
   providers: [
     {
