@@ -1,7 +1,7 @@
 import { BaseModel } from "src/base/entities/base.entity";
 import { UserEntity } from "src/modules/users/entities/user.entity";
 import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
-import { BattleEntity } from "./Battle.entity";
+import { BattleEntity } from "./battle.entity";
 
 @Entity("battle-submissions", { orderBy: { createdAt: "DESC" } })
 export class BattleSubmissionEntity extends BaseModel {
